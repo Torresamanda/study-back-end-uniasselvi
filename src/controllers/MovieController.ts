@@ -8,9 +8,7 @@ module.exports = {
         let json: Json = { error: '', result: [] };
 
         let movies = await MovieService.getAll();
-        // if(json.error){
-        //     return json.error = res.status(404).send();
-        // }
+
         for (let i in movies) {
             json.result.push({
                 id: movies[i].id,
@@ -24,20 +22,26 @@ module.exports = {
     getMovie: async (req:any, res:any) => {
         let json = { error: '', result: {} };
 
-        let internalId = req.params.id;
+        let internalId = req.params.internalId;
         let movie = await MovieService.getMovie(internalId);
 
         if (movie) {
-            json.result = movie;
+            try {
+                json.result = movie;
+                res.json(json);
+            } catch {
+                json.error = 'Erro no servidor ao pegar o filme';
+                res.status(503).json(json);
+            }
+        } else {
+            json.error = 'ID invalido ou inexistente.';
+            return res.status(404).json(json);
         }
-
-        res.json(json);
     },
 
     setMovie: async (req:any, res: any) => {
         let json = { error: '', result: {} };
 
-        
         const { id, type, name } = req.body;
         let movie: Movie = {
             id: id,
@@ -47,10 +51,8 @@ module.exports = {
 
         if (movie.id && movie.name && movie.type) {
             try {
-                const result = await MovieService.setMovie(movie);
-
+                await MovieService.setMovie(movie);
                 const movie2: Movie = {
-                    internalId: result.insertId,
                     id: movie.id,
                     name: movie.name,
                     type: movie.type
@@ -59,13 +61,12 @@ module.exports = {
                 json.result = movie2;
                 res.status(201).json(json);
             } catch (error){
-                console.error(error);
                 json.error = 'Erro ao adicionar o filme.';
                 res.status(500).json(json);
             } 
         } else {
-            json.error = 'Campos não enviados';
-            res.status(404).json(json)
+            json.error = `Campos não enviados. ${movie.id}, ${movie.name}, ${movie.type}`;
+            res.status(404).json(json);
         }
             // let movieId = await MovieService.setMovie(id, name, type);
             // json.result = {
@@ -80,12 +81,29 @@ module.exports = {
 
         // res.json(json);
     },
+    // THIS IS WORKING
+    // deleteMovie: async (req: any, res: any) => {
+    //     let json = { error: '', result: {} };
+    //     console.log('test');
+    //     const result = await MovieService.deleteMovie(req.params.id);
+
+    //     res.json(result);
+    // }
 
     deleteMovie: async (req: any, res: any) => {
         let json = { error: '', result: {} };
-
-        await MovieService.deleteMovie(req.params.id);
-
-        res.json(json);
+        const result = await MovieService.deleteMovie(req.params.internalId);
+        // console.log(result);
+        if(result.affectedRows > 0){        
+            try {
+                res.status(204).json(json);
+            } catch {
+                json.error = `Erro ao deletar o filme`;
+                res.status(500).json(json);
+            }
+        } else {
+            json.error = 'É necessario informar um id do filme a ser deletado';
+            res.status(404).json(json);
+        }
     }
 }

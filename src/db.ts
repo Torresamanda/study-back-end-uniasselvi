@@ -9,7 +9,6 @@ const connection = mysql.createConnection({
 
 connection.connect((error:any) => {
     if(error) throw error;
-
     console.log(`Conectado ao Banco de Dados: ${process.env.DB_NAME}`);
 });
 

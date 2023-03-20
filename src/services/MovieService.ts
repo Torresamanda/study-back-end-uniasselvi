@@ -4,35 +4,36 @@ const db = require('../db')
 
 module.exports = {
     getAll: () => {
-        return new Promise((aceito, rejeitado) => {
+        return new Promise((accepted, rejeitado) => {
             db.query('SELECT * FROM Movies', (error:any, results:any) => {
                 if (error) {
                     rejeitado(error);
                     return;
                 }
-                aceito(results);
+                accepted(results);
             });
         });
     },
 
     getMovie: (internalId:number) => {
-        return new Promise((aceito, rejeitado) => {
+        return new Promise((accepted, rejected) => {
             db.query('SELECT * FROM movies WHERE internalId = (?)', [internalId], (error:any, results:any) => {
                 if (error) {
-                    rejeitado(error)
+                    rejected(error);
                 }
 
-                if (results.length > 0) {
-                    aceito(results[0])
-                } else {
-                    aceito(false)
+                if (results.length) {
+                    accepted(results[0]);
+                } 
+                else {
+                    accepted(false);
                 }
             })
         })
     },
 
     setMovie: (movie:Movie) => {
-        return new Promise((aceito, rejeitado) => {
+        return new Promise((accepted, rejected) => {
 
             db.query('INSERT INTO movies (id, name, type) VALUES (?, ?, ?)',
                 [
@@ -42,24 +43,22 @@ module.exports = {
                 ],
                 (error:any, results:any) => {
                     if (error) {
-                        rejeitado(error);
-                        console.error(error);
+                        rejected(error);
                     };
 
-                    aceito(results.movie);
+                    accepted(results.movie);
                 });
         });
     },
-    
 
     deleteMovie: (internalId:number) => {
-        return new Promise((aceito, rejeitado) => {
+        return new Promise((accepted, rejected) => {
             db.query('DELETE FROM movies WHERE internalId = ?', [internalId], (error:any, results:any) => {
                 if(error) {
-                    rejeitado(error);
+                    rejected(error);
                     return
                 }
-                aceito(results);
+                accepted(results);
             })
         })
     }
