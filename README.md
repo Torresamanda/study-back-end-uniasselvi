@@ -38,6 +38,7 @@ a. Usar a sintaxe de import/export do ES6.
 
 b. Importar o MovieController usando a sintaxe apropriada para importações nomeadas.
 
+
 5 - Atualizado o arquivo json.models.ts para permitir que o campo result aceite qualquer tipo de valor.
 Assim a interface Json poderá definir o tipo de retorno de todas as funções no arquivo MovieController.ts.
 O campo result pode ser um array de objetos Movie (como na função 'getAll') ou um único objeto Movie como na (função 'getMovie'), e o TypeScript não lançará erros de tipo.
