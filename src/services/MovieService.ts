@@ -30,9 +30,7 @@ const MovieService = {
     await query('INSERT INTO movies (id, name, type) VALUES (?, ?, ?)', [
       movie.id,
       movie.name,
-      movie.type,
-      movie.release_date, //incluí data de lançamento no db
-      movie.poster_path
+      movie.type
     ]);
   },
 
@@ -40,35 +38,7 @@ const MovieService = {
     const result = await query('DELETE FROM movies WHERE internalId = ?', [internalId]);
     return result;
   },
-
-  storePopularMovies: async (popularMovies: any[]): Promise<Movie[]> => {
-    const storedMovies: Movie[] = [];
-
-    for (const movieData of popularMovies) {
-      const movie: Movie = {
-        id: movieData.id,
-        name: movieData.title,
-        type: 'popular', // Pode ser alterado de acordo com a lógica de categorização desejada
-        release_date: movieData.release_date, // incluí data de lançamento no db
-        poster_path: movieData.poster_path,
-      };
-
-      // Verifique se o filme já existe no banco de dados
-      const existingMovie = await MovieService.getMovie(movie.id);
-
-      // Se o filme não existir, insira-o no banco de dados
-      if (!existingMovie) {
-        await MovieService.setMovie(movie);
-      }
-
-      storedMovies.push(movie);
-    }
-
-    return storedMovies;
-  }
   
-
-
 };
 
 export default MovieService;
