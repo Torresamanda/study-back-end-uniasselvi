@@ -1,12 +1,12 @@
 const express = require('express')
 const router = express.Router()
 
-const MovieController = require('./controllers/MovieController')
+const JobsController = require('./controllers/JobsControllers')
 
-router.get('/movies', MovieController.buscarTodos)
-router.get('/movie/:id', MovieController.buscarUm)
-router.post('/movie', MovieController.inserir)
-router.put('/movie/:id', MovieController.alterar)
-router.delete('/movie/:id', MovieController.excluir)
+router.get('/jobs', JobsController.fetchAll)
+router.get('/job/:id', JobsController.buscarOne)
+router.post('/job', JobsController.insert)
+
+
 
 module.exports = router

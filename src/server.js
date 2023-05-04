@@ -5,7 +5,7 @@ const cors = require('cors');
 const routes = require('./routes');
 
 const server = express();
-server.use(cors({ methods: ["GET", "POST", "DELETE", "PUT", "UPDATE"] }));
+server.use(cors());
 server.use(express.urlencoded( { extended: false } ));
 
 server.use('/api', routes)
